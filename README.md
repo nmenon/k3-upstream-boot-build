@@ -71,7 +71,10 @@ The MAKEALL script is a helper to help build all the platforms in one single sho
 ```
 ./MAKEALL
 ```
-
+Or for a specific defconfig:
+```
+./MAKEALL am64x_evm_gp_all_defconfig
+```
 
 # Internal details of config file
 

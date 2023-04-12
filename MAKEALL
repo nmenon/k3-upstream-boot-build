@@ -4,7 +4,9 @@ BASE_FOLDER=/tmp/upstream-boot-build/
 BUILD_FOLDER=${BASE_FOLDER}/build
 DEPLOY_FOLDER=${BASE_FOLDER}/deploy
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-DEFCONFIGS=`cd $SCRIPT_DIR/configs;ls|sort`
+LSDEFCONFIGS=`cd $SCRIPT_DIR/configs;ls|sort`
+ARGS_DEFCONFIG=$*
+DEFCONFIGS=${ARGS_DEFCONFIG:-$LSDEFCONFIGS}
 
 build_config() {
 	config=$1
