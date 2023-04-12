@@ -65,7 +65,7 @@ Look for the various board and bootmodes supported
 ls configs
 ```
 
-Convention followed is: **<soc>_<security_type>_<board>_<bootmode>_defconfig** where
+Convention followed is: ```<soc>_<security_type>_<board>_<bootmode>_defconfig``` where
 
 * SoC is one of various SoC types - j721e, am64 etc.
 * security type is one of gp (non-secure), hsfs (auth for ti key), hsse (customer/device-specific key fused)
