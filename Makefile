@@ -10,6 +10,16 @@ override I := $(abspath $(I))
 D ?= deploy
 override D := $(abspath $(D))
 
+ROOT_DIR= $(shell pwd)
+TFA_DIR=$(ROOT_DIR)/arm-trusted-firmware
+OPTEE_DIR=$(ROOT_DIR)/optee_os
+UBOOT_DIR=$(ROOT_DIR)/u-boot
+K3IMGGEN_DIR=$(ROOT_DIR)/k3-image-gen
+FW_DIR=$(ROOT_DIR)/ti-linux-firmware
+
+unexport CROSS_COMPILE
+unexport CROSS_COMPILE64
+
 # Handle verbose
 ifeq ("$(origin V)", "command line")
   VERBOSE = $(V)
@@ -28,31 +38,31 @@ all: k3imggen u_boot
 
 
 k3imggen: $(O) $(D)
-	$(Q)cd k3-image-gen &&\
+	$(Q)cd $(K3IMGGEN_DIR) &&\
 	    $(MAKE) SOC=j721e CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen mrproper && \
 	    $(MAKE) SOC=j721e CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
-	    SYSFW_PATH=$(abspath ti-linux-firmware/ti-sysfw/ti-fs-firmware-j721e-gp.bin)&& \
+	    SYSFW_PATH=$(abspath $(FW_DIR)/ti-sysfw/ti-fs-firmware-j721e-gp.bin)&& \
 	    cp -v sysfw.itb $(D)
 
 tfa: $(O) $(I)
-	$(Q)$(MAKE) -C arm-trusted-firmware BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=generic SPD=opteed all
+	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=generic SPD=opteed all
 	$(Q)cp -v $(O)/arm-trusted-firmware/k3/generic/release/bl31.bin $(I)
 
 optee: $(O) $(I)
-	$(Q)$(MAKE) -C optee_os O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=k3 CFG_TEE_CORE_LOG_LEVEL=2 CFG_ARM64_core=y all
+	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=k3 CFG_TEE_CORE_LOG_LEVEL=2 CFG_ARM64_core=y all
 	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)/
 
 u_boot_r5: $(O) $(D)
-	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 j721e_evm_r5_defconfig
-	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 j721e_evm_r5_defconfig
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
 	$(Q)cp -v $(O)/u-boot/r5/tiboot3.bin $(D)
 
 u_boot_armv8: $(O) $(D) optee tfa
-	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 j721e_evm_a72_defconfig
-	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 \
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 j721e_evm_a72_defconfig
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 \
 				  ATF=$(I)/bl31.bin \
 				  TEE=$(I)/tee-pager_v2.bin \
-				  DM=$(abspath ti-linux-firmware/ti-dm/j721e/ipc_echo_testb_mcu1_0_release_strip.xer5f)
+				  DM=$(abspath $(FW_DIR)/ti-dm/j721e/ipc_echo_testb_mcu1_0_release_strip.xer5f)
 	$(Q) cp -v $(O)/u-boot/armv8/tispl.bin $(D)
 	$(Q) cp -v $(O)/u-boot/armv8/u-boot.img $(D)
 
@@ -69,7 +79,7 @@ $(I):
 
 mrproper:
 	$(Q)rm -rvf $(O) $(I) $(D)
-	$(Q)cd k3-image-gen && git clean -fdx
+	$(Q)cd $(K3IMGGEN_DIR) && git clean -fdx
 
 git:
 	$(Q)git submodule status|grep '^-' && git submodule init && \
