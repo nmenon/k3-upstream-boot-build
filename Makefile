@@ -71,10 +71,11 @@ u_boot: u_boot_r5 u_boot_armv8
 
 $(O):
 	$(Q)mkdir -p $(O)
+
 $(D):
 	$(Q)mkdir -p $(D)
 
-$(I):
+$(I): $(O)
 	$(Q)mkdir -p $(I)
 
 mrproper:
