@@ -4,6 +4,9 @@ BOARD_NAME=evm
 SECURITY_TYPE=gp
 BOOTTYPE=all
 
+# One of the few platforms without multi-certificate capability.
+MULTICERTIFICATE_BOOT_CAPABLE=0
+
 K3IMGGEN_SOC=$(SOC_NAME)
 
 FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-fs-firmware-j721e-gp.bin

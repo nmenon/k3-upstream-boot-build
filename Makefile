@@ -47,7 +47,24 @@ endif
 %defconfig: $(CONFIG_DIR)/%defconfig $(O)
 	$(Q)cp $< $(O)/.config
 
-k3imggen: $(O) $(D)
+ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),1)
+k3imggen: k3imggen_multicert
+	$(Q)echo "Multi-certificate k3imggen built"
+else
+k3imggen: k3imggen_legacy
+	$(Q)echo "Legacy k3imggen (non-multi-certificate) built"
+endif
+
+k3imggen_multicert: $(O) $(D) u_boot_r5
+	$(Q)cd k3-image-gen && \
+	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
+		SBL=$(I)/u-boot-spl.bin mrproper && \
+	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
+		SYSFW_PATH=$(abspath $(FW_TIFS_PATH)) \
+		SBL=$(I)/u-boot-spl.bin && \
+	    cp -v tiboot3.bin $(D)
+
+k3imggen_legacy: $(O) $(D)
 	$(Q)cd $(K3IMGGEN_DIR) &&\
 	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen mrproper && \
 	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
@@ -56,13 +73,26 @@ k3imggen: $(O) $(D)
 
 tfa: $(O) $(I)
 	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=$(TFA_BOARD) SPD=opteed all
-	$(Q)cp -v $(O)/arm-trusted-firmware/k3/generic/release/bl31.bin $(I)
+	$(Q)cp -v $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/release/bl31.bin $(I)
 
 optee: $(O) $(I)
 	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=$(OPTEE_PLATFORM) CFG_TEE_CORE_LOG_LEVEL=2 CFG_ARM64_core=y all
 	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)/
 
-u_boot_r5: $(O) $(D)
+ifdef MULTICERTIFICATE_BOOT_CAPABLE
+u_boot_r5: u_boot_r5_multicert
+	$(Q)echo "Multi-certificate u-boot-r5 built"
+else
+u_boot_r5: u_boot_r5_legacy
+	$(Q)echo "Legacy u-boot-r5 (non-multi-certificate) built"
+endif
+
+u_boot_r5_multicert: $(O) $(I)
+	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
+	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
+	$(Q)cp -v $(O)/u-boot/r5/spl/u-boot-spl.bin $(I)
+
+u_boot_r5_legacy: $(O) $(D)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
 	$(Q)cp -v $(O)/u-boot/r5/tiboot3.bin $(D)
