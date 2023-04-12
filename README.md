@@ -75,7 +75,7 @@ Convention followed is: ```<soc>_<board>_<security_type>_<bootmode>_defconfig```
 ## Building the platform
 
 ```
-make mysoc_gp_myboard_mmc_defconfig
+make mysoc_myboard_gp_mmc_defconfig
 make
 ```
 
