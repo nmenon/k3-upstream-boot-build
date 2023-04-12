@@ -15,7 +15,7 @@ FW_DM_PATH ?= $(FW_DIR)/ti-dm/j721e/ipc_echo_testb_mcu1_0_release_strip.xer5f
 
 TFA_BOARD=generic
 
-OPTEE_PLATFORM=k3
+OPTEE_PLATFORM=k3-j721e
 
 UBOOT_ARMV7_DEFCONFIG=j721e_evm_r5_defconfig
 UBOOT_ARMV8_DEFCONFIG=j721e_evm_a72_defconfig
