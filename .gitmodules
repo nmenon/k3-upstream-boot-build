@@ -1,0 +1,16 @@
+[submodule "arm-trusted-firmware"]
+	path = arm-trusted-firmware
+	url = https://github.com/ARM-software/arm-trusted-firmware.git
+[submodule "optee_os"]
+	path = optee_os
+	url = https://github.com/OP-TEE/optee_os.git
+[submodule "u-boot"]
+	path = u-boot
+	url = https://source.denx.de/u-boot/u-boot.git
+[submodule "ti-linux-firmware"]
+	path = ti-linux-firmware
+	url = https://git.ti.com/cgit/processor-firmware/ti-linux-firmware
+	branch = ti-linux-firmware
+[submodule "k3-image-gen"]
+	path = k3-image-gen
+	url = https://git.beagleboard.org/beagleboard/k3-image-gen.git
