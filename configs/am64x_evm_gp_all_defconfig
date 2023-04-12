@@ -11,7 +11,7 @@ K3IMGGEN_SOC=$(SOC_NAME)
 
 FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-sci-firmware-am64x-gp.bin
 
-TFA_BOARD=generic
+TFA_BOARD=lite
 
 OPTEE_PLATFORM=k3-am64x
 
