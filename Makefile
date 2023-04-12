@@ -36,6 +36,9 @@ CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 
 -include $(O)/.config
 
+ifneq ($(DM_COMBINED_WITH_TIFS),1)
+	DMCONF="DM=$(abspath $(FW_DM_PATH))"
+endif
 ifndef SOC_NAME
 all: help
 	$(Q)echo "Please Select a defconfig"
@@ -79,7 +82,7 @@ optee: $(O) $(I)
 	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=$(OPTEE_PLATFORM) CFG_TEE_CORE_LOG_LEVEL=2 CFG_ARM64_core=y all
 	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)/
 
-ifdef MULTICERTIFICATE_BOOT_CAPABLE
+ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),1)
 u_boot_r5: u_boot_r5_multicert
 	$(Q)echo "Multi-certificate u-boot-r5 built"
 else
@@ -102,7 +105,7 @@ u_boot_armv8: $(O) $(D) optee tfa
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 \
 				  ATF=$(I)/bl31.bin \
 				  TEE=$(I)/tee-pager_v2.bin \
-				  DM=$(abspath $(FW_DM_PATH))
+				  $(DMCONF)
 	$(Q) cp -v $(O)/u-boot/armv8/tispl.bin $(D)
 	$(Q) cp -v $(O)/u-boot/armv8/u-boot.img $(D)
 

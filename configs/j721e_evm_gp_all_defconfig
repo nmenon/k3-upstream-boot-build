@@ -6,6 +6,7 @@ BOOTTYPE=all
 
 # One of the few platforms without multi-certificate capability.
 MULTICERTIFICATE_BOOT_CAPABLE=0
+DM_COMBINED_WITH_TIFS=0
 
 K3IMGGEN_SOC=$(SOC_NAME)
 
