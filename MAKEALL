@@ -25,3 +25,4 @@ do
 done
 
 echo "All done: See $DEPLOY_FOLDER for files and $BUILD_FOLDER for build artifacts. $BASE_FOLDER for build logs"
+tail -n 1 $BASE_FOLDER/*.txt
