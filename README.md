@@ -121,6 +121,7 @@ The following table provides a bird's eye view of the same
 | FW_TIFS_PATH | path to tifs firmware |
 | FW_DM_PATH | (valid only if not combined image) Path to the dm firmware |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
+| TFA_EXTRA_ARGS | Any extra TFA arguments to pass to build (example: K3_PM_SYSTEM_SUSPEND=1) |
 | OPTEE_PLATFORM | Name of the optee platform |
 | UBOOT_ARMV7_DEFCONFIG | Name of the u-boot defconfig for the R5 SPL |
 | UBOOT_ARMV8_DEFCONFIG | Name of the u-boot defconfig for the armv8 processor |
