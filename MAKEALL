@@ -1,0 +1,27 @@
+#!/bin/bash
+
+BASE_FOLDER=/tmp/upstream-boot-build/
+BUILD_FOLDER=${BASE_FOLDER}/build
+DEPLOY_FOLDER=${BASE_FOLDER}/deploy
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+DEFCONFIGS=`cd $SCRIPT_DIR/configs;ls|sort`
+
+build_config() {
+	config=$1
+	folder_name=`echo $config|sed -e "s/_defconfig//g"`
+	build_path=$BUILD_FOLDER/$folder_name
+	deploy_path=$DEPLOY_FOLDER/$folder_name
+	make -j`nproc` O=$build_path D=$deploy_path mrproper
+	make -j`nproc` O=$build_path D=$deploy_path $config
+	make -j`nproc` O=$build_path D=$deploy_path
+}
+
+mkdir -p $BASE_FOLDER
+for config in $DEFCONFIGS
+do
+	echo Building for "$config"
+	# Wish we could run this in parallel, but k3imggen gets in the way
+	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt
+done
+
+echo "All done: See $DEPLOY_FOLDER for files and $BUILD_FOLDER for build artifacts. $BASE_FOLDER for build logs"
