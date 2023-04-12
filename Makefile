@@ -11,6 +11,7 @@ D ?= deploy
 override D := $(abspath $(D))
 
 ROOT_DIR= $(shell pwd)
+CONFIG_DIR=$(ROOT_DIR)/configs
 TFA_DIR=$(ROOT_DIR)/arm-trusted-firmware
 OPTEE_DIR=$(ROOT_DIR)/optee_os
 UBOOT_DIR=$(ROOT_DIR)/u-boot
@@ -33,36 +34,45 @@ CROSS_COMPILE_64 ?= aarch64-none-linux-gnu-
 # 32bit Defaults
 CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 
-all: k3imggen u_boot
-	$(Q)echo "J721E bootloader build Complete"
+-include $(O)/.config
 
+ifndef SOC_NAME
+all: help
+	$(Q)echo "Please Select a defconfig"
+else
+all: k3imggen u_boot
+	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE) BOOTTYPE=$(BOOTTYPE)"
+endif
+
+%defconfig: $(CONFIG_DIR)/%defconfig $(O)
+	$(Q)cp $< $(O)/.config
 
 k3imggen: $(O) $(D)
 	$(Q)cd $(K3IMGGEN_DIR) &&\
-	    $(MAKE) SOC=j721e CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen mrproper && \
-	    $(MAKE) SOC=j721e CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
-	    SYSFW_PATH=$(abspath $(FW_DIR)/ti-sysfw/ti-fs-firmware-j721e-gp.bin)&& \
+	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen mrproper && \
+	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
+	    SYSFW_PATH=$(abspath $(FW_TIFS_PATH))&& \
 	    cp -v sysfw.itb $(D)
 
 tfa: $(O) $(I)
-	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=generic SPD=opteed all
+	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=$(TFA_BOARD) SPD=opteed all
 	$(Q)cp -v $(O)/arm-trusted-firmware/k3/generic/release/bl31.bin $(I)
 
 optee: $(O) $(I)
-	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=k3 CFG_TEE_CORE_LOG_LEVEL=2 CFG_ARM64_core=y all
+	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=$(OPTEE_PLATFORM) CFG_TEE_CORE_LOG_LEVEL=2 CFG_ARM64_core=y all
 	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)/
 
 u_boot_r5: $(O) $(D)
-	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 j721e_evm_r5_defconfig
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
 	$(Q)cp -v $(O)/u-boot/r5/tiboot3.bin $(D)
 
 u_boot_armv8: $(O) $(D) optee tfa
-	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 j721e_evm_a72_defconfig
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 \
 				  ATF=$(I)/bl31.bin \
 				  TEE=$(I)/tee-pager_v2.bin \
-				  DM=$(abspath $(FW_DIR)/ti-dm/j721e/ipc_echo_testb_mcu1_0_release_strip.xer5f)
+				  DM=$(abspath $(FW_DM_PATH))
 	$(Q) cp -v $(O)/u-boot/armv8/tispl.bin $(D)
 	$(Q) cp -v $(O)/u-boot/armv8/u-boot.img $(D)
 
@@ -126,3 +136,17 @@ gitdesc: git
 	$(Q)$(shell echo "I am at: "`git rev-parse --abbrev-ref HEAD` \
 			"@" `git describe --always --dirty` ":"\
 			`git ls-remote --get-url` 1>&2)
+
+help:
+	$(Q)echo
+	$(Q)echo "help:"
+	$(Q)echo
+	$(Q)echo "Please read README.md for complete details"
+	$(Q)echo
+	$(Q)echo "Basic steps:"
+	$(Q)echo "make soc_board_gp_all_defconfig"
+	$(Q)echo "make"
+	$(Q)echo
+	$(Q)echo "Available defconfigs"
+	$(Q)cd $(CONFIG_DIR);ls *defconfig|sort|nl
+	$(Q)echo
