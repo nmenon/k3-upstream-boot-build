@@ -39,6 +39,25 @@ If getting it all correctly seems painful, unfortunately, it is.. (also see TODO
 
 # Build steps
 
+## Cloning the environment
+
+If you want the latest:
+```
+git clone https://github.com/nmenon/k3-upstream-boot-build.git
+```
+OR a specific branch:
+```
+git clone -b some-branch https://github.com/nmenon/k3-upstream-boot-build.git
+```
+
+## Update the gitsubmodules
+
+To help ease syncing there is a makefile rule to make this happen:
+```
+cd k3-upstream-boot-build
+make gitsync
+```
+
 ## Checking what board to build
 Look for the various board and bootmodes supported
 
