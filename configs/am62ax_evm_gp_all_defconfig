@@ -1,0 +1,22 @@
+# am62ax EVM configuration for GP devices
+SOC_NAME=am62ax
+BOARD_NAME=evm
+SECURITY_TYPE=gp
+BOOTTYPE=mmc
+
+MULTICERTIFICATE_BOOT_CAPABLE=1
+DM_COMBINED_WITH_TIFS=0
+
+K3IMGGEN_SOC=$(SOC_NAME)
+
+FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-fs-firmware-am62ax-gp.bin
+FW_DM_PATH ?= $(FW_DIR)/ti-dm/am62axx/ipc_echo_testb_mcu1_0_release_strip.xer5f
+
+TFA_BOARD=lite
+TFA_EXTRA_ARGS="K3_PM_SYSTEM_SUSPEND=1"
+
+OPTEE_PLATFORM=k3-am62ax
+OPTEE_EXTRA_ARGS="CFG_WITH_SOFTWARE_PRNG=y"
+
+UBOOT_ARMV7_DEFCONFIG=am62ax_evm_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=am62ax_evm_a53_defconfig
