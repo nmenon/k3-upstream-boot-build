@@ -7,7 +7,7 @@
 [submodule "u-boot"]
 	path = u-boot
 	url = https://github.com/beagleboard/u-boot.git
-	branch = v2021.01-ti-BeaglePlay-Staging
+	branch = v2021.01-ti-BeaglePlay-Release
 [submodule "ti-linux-firmware"]
 	path = ti-linux-firmware
 	url = https://git.ti.com/cgit/processor-firmware/ti-linux-firmware
