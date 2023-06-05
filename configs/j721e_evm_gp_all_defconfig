@@ -2,7 +2,6 @@
 SOC_NAME=j721e
 BOARD_NAME=evm
 SECURITY_TYPE=gp
-BOOTTYPE=all
 
 # One of the few platforms without multi-certificate capability.
 MULTICERTIFICATE_BOOT_CAPABLE=0
