@@ -138,7 +138,6 @@ $(I): $(O)
 
 mrproper:
 	$(Q)rm -rvf $(O) $(I) $(D)
-	$(Q)cd $(K3IMGGEN_DIR) && git clean -fdx
 
 git:
 	$(Q)git submodule status|grep '^-' && git submodule init && \
