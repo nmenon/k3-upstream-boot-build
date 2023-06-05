@@ -1,7 +1,9 @@
 # Introduction
 
-This is a trivial build package to help ease build and deploy of various K3
-Boards with as much upstream components as possible.
+This is a build package to help ease build and deploy of various K3
+Boards.  By default, as many upstream components as possible are used.
+A different repository location for either U-Boot, Arm Trusted Firmware, or
+OP-TEE can be specified if desired.
 
 # Upstream Status
 
@@ -79,6 +81,23 @@ make mysoc_myboard_gp_mmc_defconfig
 make
 ```
 
+### To override a repository location
+To use a different repository location for U-Boot, Arm Trusted Firmware, or
+OP-TEE, define the appropriate variables below
+
+| Repo | Location variable |
+| :--- | :--- |
+| arm trusted firmware | TFA_DIR |
+| optee OS | OPTEE_DIR |
+| U-Boot | UBOOT_DIR |
+
+For example, to use the TI SDK repo for u-boot, use:
+
+```
+make mysoc_myboard_gp_mmc_defconfig
+make UBOOT_DIR=<path to ti-u-boot>
+```
+
 ## Bootfiles
 
 boot files will be located in deploy/ folder.
@@ -136,12 +155,11 @@ The following table provides a bird's eye view of the same
 | :---                  | :---        |
 | SOC_NAME   | SoC name of the board |
 | BOARD_NAME   | Name of the board |
-| SECURITY_TYPE   | What kind of security type is the chip? hs/gp |
+| SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
 | MULTICERTIFICATE_BOOT_CAPABLE | Is this multi-certificate boot capable chip: 0 or 1|
 | DM_COMBINED_WITH_TIFS | Is DM combined with TIFS in the firmware? 0 or 1|
 | K3IMGGEN_SOC | (hopefully gone soon) what name does k3imagegen use for this SoC?|
-| FW_TIFS_PATH | path to tifs firmware |
-| FW_DM_PATH | (valid only if not combined image) Path to the dm firmware |
+| DM_SOC_NAME | DM SOC directory name in linux-firmware repo (if != SOC_NAME) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
 | TFA_EXTRA_ARGS | Any extra TFA arguments to pass to build (example: K3_PM_SYSTEM_SUSPEND=1) |
 | OPTEE_PLATFORM | Name of the optee platform |
