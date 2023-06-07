@@ -160,7 +160,7 @@ The following table provides a bird's eye view of the same
 | DM_COMBINED_WITH_TIFS | Is DM combined with TIFS in the firmware? 0 or 1|
 | K3IMGGEN_SOC | (hopefully gone soon) what name does k3imagegen use for this SoC?|
 | FW_TIFS_PATH | path to tifs firmware |
-| FW_DM_PATH | (valid only if not combined image) Path to the dm firmware |
+| DM_SOC_NAME | DM SOC directory name in linux-firmware repo (if != SOC_NAME) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
 | TFA_EXTRA_ARGS | Any extra TFA arguments to pass to build (example: K3_PM_SYSTEM_SUSPEND=1) |
 | OPTEE_PLATFORM | Name of the optee platform |

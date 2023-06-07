@@ -39,8 +39,10 @@ CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 TFA_BOARD ?= generic
 
 ifneq ($(DM_COMBINED_WITH_TIFS),1)
-	DMCONF="DM=$(abspath $(FW_DM_PATH))"
+	DM_SOC_NAME ?= $(SOC_NAME)
+	DMCONF="DM=$(I)/ipc_echo_testb_mcu1_0_release_strip.xer5f$(HS_EXT)"
 endif
+
 ifndef SOC_NAME
 all: help
 	$(Q)echo "Please Select a defconfig"
@@ -92,6 +94,11 @@ u_boot_r5: u_boot_r5_legacy
 	$(Q)echo "Legacy u-boot-r5 (non-multi-certificate) built"
 endif
 
+dm: $(I)
+ifneq ($(DM_COMBINED_WITH_TIFS),1)
+	$(Q)cp -v $(FW_DIR)/ti-dm/$(DM_SOC_NAME)/ipc_echo_testb_mcu1_0_release_strip.xer5f $(I)
+endif
+
 u_boot_r5_multicert: $(O) $(I)
 	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
 	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
@@ -102,7 +109,7 @@ u_boot_r5_legacy: $(O) $(D)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
 	$(Q)cp -v $(O)/u-boot/r5/tiboot3.bin $(D)
 
-u_boot_armv8: $(O) $(D) optee tfa
+u_boot_armv8: $(O) $(D) optee tfa dm
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 \
 				  ATF=$(I)/bl31.bin \
