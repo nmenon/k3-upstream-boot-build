@@ -36,6 +36,8 @@ CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 
 -include $(O)/.config
 
+TFA_BOARD ?= generic
+
 ifneq ($(DM_COMBINED_WITH_TIFS),1)
 	DMCONF="DM=$(abspath $(FW_DM_PATH))"
 endif

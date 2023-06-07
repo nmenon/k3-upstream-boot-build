@@ -12,8 +12,6 @@ K3IMGGEN_SOC=$(SOC_NAME)
 FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-fs-firmware-j721s2-gp.bin
 FW_DM_PATH ?= $(FW_DIR)/ti-dm/j721s2/ipc_echo_testb_mcu1_0_release_strip.xer5f
 
-TFA_BOARD=generic
-
 OPTEE_PLATFORM=k3-j784s4
 OPTEE_EXTRA_ARGS="CFG_CONSOLE_UART=0x8"
 

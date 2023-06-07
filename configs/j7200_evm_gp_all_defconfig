@@ -12,8 +12,6 @@ K3IMGGEN_SOC=$(SOC_NAME)
 FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-fs-firmware-j7200-gp.bin
 FW_DM_PATH ?= $(FW_DIR)/ti-dm/j7200/ipc_echo_testb_mcu1_0_release_strip.xer5f
 
-TFA_BOARD=generic
-
 OPTEE_PLATFORM=k3-j7200
 
 UBOOT_ARMV7_DEFCONFIG=j7200_evm_r5_defconfig
