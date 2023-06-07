@@ -1,7 +1,9 @@
 # Introduction
 
-This is a trivial build package to help ease build and deploy of various K3
-Boards with as much upstream components as possible.
+This is a build package to help ease build and deploy of various K3
+Boards.  By default, as many upstream components as possible are used.
+A different repository location for either U-Boot, Arm Trusted Firmware, or
+OP-TEE can be specified if desired.
 
 # Upstream Status
 
@@ -77,6 +79,23 @@ Convention followed is: ```<soc>_<board>_<security_type>_<bootmode>_defconfig```
 ```
 make mysoc_myboard_gp_mmc_defconfig
 make
+```
+
+### To override a repository location
+To use a different repository location for U-Boot, Arm Trusted Firmware, or
+OP-TEE, define the appropriate variables below
+
+| Repo | Location variable |
+| :--- | :--- |
+| arm trusted firmware | TFA_DIR |
+| optee OS | OPTEE_DIR |
+| U-Boot | UBOOT_DIR |
+
+For example, to use the TI SDK repo for u-boot, use:
+
+```
+make mysoc_myboard_gp_mmc_defconfig
+make UBOOT_DIR=<path to ti-u-boot>
 ```
 
 ## Bootfiles

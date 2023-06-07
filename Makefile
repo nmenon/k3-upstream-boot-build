@@ -12,9 +12,9 @@ override D := $(abspath $(D))
 
 ROOT_DIR= $(shell pwd)
 CONFIG_DIR=$(ROOT_DIR)/configs
-TFA_DIR=$(ROOT_DIR)/arm-trusted-firmware
-OPTEE_DIR=$(ROOT_DIR)/optee_os
-UBOOT_DIR=$(ROOT_DIR)/u-boot
+TFA_DIR ?= $(ROOT_DIR)/arm-trusted-firmware
+OPTEE_DIR ?= $(ROOT_DIR)/optee_os
+UBOOT_DIR ?= $(ROOT_DIR)/u-boot
 K3IMGGEN_DIR=$(ROOT_DIR)/k3-image-gen
 FW_DIR=$(ROOT_DIR)/ti-linux-firmware
 
