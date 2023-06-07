@@ -63,20 +63,18 @@ k3imggen: k3imggen_legacy
 endif
 
 k3imggen_multicert: $(O) $(D) u_boot_r5
-	$(Q)cd k3-image-gen && \
-	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
-		SBL=$(I)/u-boot-spl.bin mrproper && \
-	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
-		SYSFW_PATH=$(abspath $(FW_TIFS_PATH)) \
-		SBL=$(I)/u-boot-spl.bin && \
-	    cp -v tiboot3.bin $(D)
+	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
+			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen SBL=$(I)/u-boot-spl.bin mrproper
+	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
+			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen SBL=$(I)/u-boot-spl.bin
+	$(Q)cp -v $(K3IMGGEN_DIR)/tiboot3.bin $(D)
 
 k3imggen_legacy: $(O) $(D)
-	$(Q)cd $(K3IMGGEN_DIR) &&\
-	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen mrproper && \
-	    $(MAKE) SOC=$(K3IMGGEN_SOC) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/k3-img-gen \
-	    SYSFW_PATH=$(abspath $(FW_TIFS_PATH))&& \
-	    cp -v sysfw.itb $(D)
+	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
+			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen TI_SECURE_DEV_PKG=$(SECDEV_DIR) mrproper
+	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
+			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen TI_SECURE_DEV_PKG=$(SECDEV_DIR) SYFW_DIR=$(FW_DIR)/ti-sysfw
+	$(Q)cp -v $(K3IMGGEN_DIR)/sysfw.itb $(D)
 
 tfa: $(O) $(I)
 	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=$(TFA_BOARD) $(TFA_EXTRA_ARGS) SPD=opteed all

@@ -9,8 +9,6 @@ DM_COMBINED_WITH_TIFS=1
 
 K3IMGGEN_SOC=$(SOC_NAME)
 
-FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-sci-firmware-am65x-gp.bin
-
 OPTEE_PLATFORM=k3-am65x
 
 UBOOT_ARMV7_DEFCONFIG=am65x_evm_r5_defconfig

@@ -9,7 +9,6 @@ DM_COMBINED_WITH_TIFS=0
 
 K3IMGGEN_SOC=$(SOC_NAME)
 
-FW_TIFS_PATH ?= $(FW_DIR)/ti-sysfw/ti-fs-firmware-am62ax-gp.bin
 DM_SOC_NAME = am62axx
 
 TFA_BOARD=lite
