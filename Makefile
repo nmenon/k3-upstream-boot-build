@@ -84,28 +84,19 @@ optee: $(O) $(I)
 	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=$(OPTEE_PLATFORM) $(OPTEE_EXTRA_ARGS) CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y CFG_ARM64_core=y all
 	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)/
 
-ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),1)
-u_boot_r5: u_boot_r5_multicert
-	$(Q)echo "Multi-certificate u-boot-r5 built"
-else
-u_boot_r5: u_boot_r5_legacy
-	$(Q)echo "Legacy u-boot-r5 (non-multi-certificate) built"
-endif
-
 dm: $(I)
 ifneq ($(DM_COMBINED_WITH_TIFS),1)
 	$(Q)cp -v $(FW_DIR)/ti-dm/$(DM_SOC_NAME)/ipc_echo_testb_mcu1_0_release_strip.xer5f $(I)
 endif
 
-u_boot_r5_multicert: $(O) $(I)
-	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
-	$(Q)$(MAKE) -C u-boot CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
-	$(Q)cp -v $(O)/u-boot/r5/spl/u-boot-spl.bin $(I)
-
-u_boot_r5_legacy: $(O) $(D)
+u_boot_r5: $(O) $(I)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5
+ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),1)
+	$(Q)cp -v $(O)/u-boot/r5/spl/u-boot-spl.bin $(I)
+else
 	$(Q)cp -v $(O)/u-boot/r5/tiboot3.bin $(D)
+endif
 
 u_boot_armv8: $(O) $(D) optee tfa dm
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)
