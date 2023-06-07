@@ -155,7 +155,7 @@ The following table provides a bird's eye view of the same
 | :---                  | :---        |
 | SOC_NAME   | SoC name of the board |
 | BOARD_NAME   | Name of the board |
-| SECURITY_TYPE   | What kind of security type is the chip? hs/gp |
+| SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
 | MULTICERTIFICATE_BOOT_CAPABLE | Is this multi-certificate boot capable chip: 0 or 1|
 | DM_COMBINED_WITH_TIFS | Is DM combined with TIFS in the firmware? 0 or 1|
 | K3IMGGEN_SOC | (hopefully gone soon) what name does k3imagegen use for this SoC?|
