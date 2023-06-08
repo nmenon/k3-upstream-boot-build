@@ -1,7 +1,7 @@
-# am62x EVM configuration for GP devices
+# am62x EVM configuration for HS-FS devices
 SOC_NAME=am62x
 BOARD_NAME=evm
-SECURITY_TYPE=gp
+SECURITY_TYPE=hs-fs
 BOOTTYPE=mmc
 
 MULTICERTIFICATE_BOOT_CAPABLE=1
