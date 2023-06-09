@@ -1,4 +1,4 @@
-# EVM configuration for GP devices
+# AM65 EVM configuration for GP devices
 SOC_NAME=am65x
 BOARD_NAME=evm
 SECURITY_TYPE=gp
