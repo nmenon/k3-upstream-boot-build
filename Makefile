@@ -42,8 +42,6 @@ ifneq ($(SECURITY_TYPE),gp)
 	HS_UBOOTEXT = _HS
 endif
 
-TFA_BOARD ?= generic
-
 ifneq ($(DM_COMBINED_WITH_TIFS),1)
 	DM_SOC_NAME ?= $(SOC_NAME)
 	DMCONF="DM=$(I)/ipc_echo_testb_mcu1_0_release_strip.xer5f$(HS_EXT)"
