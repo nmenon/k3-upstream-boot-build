@@ -6,14 +6,9 @@
 	url = https://github.com/OP-TEE/optee_os.git
 [submodule "u-boot"]
 	path = u-boot
-	url = https://source.denx.de/u-boot/u-boot.git
+	url = https://git.ti.com/cgit/ti-u-boot/ti-u-boot
+	branch = ti-u-boot-2023.04
 [submodule "ti-linux-firmware"]
 	path = ti-linux-firmware
 	url = https://git.ti.com/cgit/processor-firmware/ti-linux-firmware
 	branch = ti-linux-firmware
-[submodule "k3-image-gen"]
-	path = k3-image-gen
-	url = https://git.beagleboard.org/beagleboard/k3-image-gen.git
-[submodule "core-secdev-k3"]
-	path = core-secdev-k3
-	url = https://git.ti.com/git/security-development-tools/core-secdev-k3.git
