@@ -42,8 +42,6 @@ ifneq ($(SECURITY_TYPE),gp)
 	HS_UBOOTEXT = _HS
 endif
 
-TFA_BOARD ?= generic
-
 ifneq ($(DM_COMBINED_WITH_TIFS),1)
 	DM_SOC_NAME ?= $(SOC_NAME)
 	DMCONF="DM=$(I)/ipc_echo_testb_mcu1_0_release_strip.xer5f$(HS_EXT)"
@@ -54,7 +52,7 @@ all: help
 	$(Q)echo "Please Select a defconfig"
 else
 all: k3imggen u_boot
-	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE) BOOTTYPE=$(BOOTTYPE)"
+	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE)"
 endif
 
 %defconfig: $(CONFIG_DIR)/%defconfig $(O)
@@ -138,7 +136,6 @@ $(I): $(O)
 
 mrproper:
 	$(Q)rm -rvf $(O) $(I) $(D)
-	$(Q)cd $(K3IMGGEN_DIR) && git clean -fdx
 
 git:
 	$(Q)git submodule status|grep '^-' && git submodule init && \

@@ -1,8 +1,7 @@
-# J721e EVM configuration for GP devices
+# AM64 EVM configuration for GP devices
 SOC_NAME=am64x
 BOARD_NAME=evm
 SECURITY_TYPE=gp
-BOOTTYPE=all
 
 MULTICERTIFICATE_BOOT_CAPABLE=1
 DM_COMBINED_WITH_TIFS=1

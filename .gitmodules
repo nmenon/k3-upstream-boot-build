@@ -16,4 +16,4 @@
 	url = https://git.beagleboard.org/beagleboard/k3-image-gen.git
 [submodule "core-secdev-k3"]
 	path = core-secdev-k3
-	url = https://git.ti.com/git/security-development-tools/core-secdev-k3.git
+	url = https://git.ti.com/cgit/security-development-tools/core-secdev-k3
