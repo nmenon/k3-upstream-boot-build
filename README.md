@@ -81,14 +81,15 @@ make
 ```
 
 ### To override a repository location
-To use a different repository location for U-Boot, Arm Trusted Firmware, or
-OP-TEE, define the appropriate variables below
+To use a different repository location for U-Boot, Arm Trusted Firmware,
+OP-TEE, or ti-linux-firmware define the appropriate variables below
 
 | Repo | Location variable |
 | :--- | :--- |
 | arm trusted firmware | TFA_DIR |
 | optee OS | OPTEE_DIR |
 | U-Boot | UBOOT_DIR |
+| ti-linux-firmware | FW_DIR |
 
 For example, to use the TI SDK repo for u-boot, use:
 

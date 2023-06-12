@@ -15,7 +15,7 @@ CONFIG_DIR=$(ROOT_DIR)/configs
 TFA_DIR ?= $(ROOT_DIR)/arm-trusted-firmware
 OPTEE_DIR ?= $(ROOT_DIR)/optee_os
 UBOOT_DIR ?= $(ROOT_DIR)/u-boot
-FW_DIR=$(ROOT_DIR)/ti-linux-firmware
+FW_DIR ?= $(ROOT_DIR)/ti-linux-firmware
 
 unexport CROSS_COMPILE
 unexport CROSS_COMPILE64
