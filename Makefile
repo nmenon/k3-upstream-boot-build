@@ -15,9 +15,7 @@ CONFIG_DIR=$(ROOT_DIR)/configs
 TFA_DIR ?= $(ROOT_DIR)/arm-trusted-firmware
 OPTEE_DIR ?= $(ROOT_DIR)/optee_os
 UBOOT_DIR ?= $(ROOT_DIR)/u-boot
-K3IMGGEN_DIR=$(ROOT_DIR)/k3-image-gen
 FW_DIR=$(ROOT_DIR)/ti-linux-firmware
-SECDEV_DIR=$(ROOT_DIR)/core-secdev-k3
 
 unexport CROSS_COMPILE
 unexport CROSS_COMPILE64
@@ -37,92 +35,46 @@ CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 
 -include $(O)/.config
 
-ifneq ($(SECURITY_TYPE),gp)
-	HS_EXT = .signed
-	HS_UBOOTEXT = _HS
-endif
-
 TFA_BOARD ?= generic
 
-ifneq ($(DM_COMBINED_WITH_TIFS),1)
-	DM_SOC_NAME ?= $(SOC_NAME)
-	DMCONF="DM=$(I)/ipc_echo_testb_mcu1_0_release_strip.xer5f$(HS_EXT)"
+ifeq ($(SECURITY_TYPE),gp)
+	SECTYPE_EXT = _unsigned
 endif
 
 ifndef SOC_NAME
 all: help
 	$(Q)echo "Please Select a defconfig"
 else
-all: k3imggen u_boot
+all: u_boot
 	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE) BOOTTYPE=$(BOOTTYPE)"
 endif
 
 %defconfig: $(CONFIG_DIR)/%defconfig $(O)
 	$(Q)cp $< $(O)/.config
 
-ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),1)
-k3imggen: k3imggen_multicert
-	$(Q)echo "Multi-certificate k3imggen built"
-else
-k3imggen: k3imggen_legacy
-	$(Q)echo "Legacy k3imggen (non-multi-certificate) built"
-endif
-
-k3imggen_multicert: $(O) $(D) u_boot_r5
-	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
-			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen TI_SECURE_DEV_PKG=$(SECDEV_DIR) SBL=$(I)/u-boot-spl.bin mrproper
-	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
-			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen TI_SECURE_DEV_PKG=$(SECDEV_DIR) SBL=$(I)/u-boot-spl.bin
-	$(Q)cp -v $(K3IMGGEN_DIR)/tiboot3.bin $(D)
-
-k3imggen_legacy: $(O) $(D)
-	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
-			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen TI_SECURE_DEV_PKG=$(SECDEV_DIR) mrproper
-	$(Q)$(MAKE) -C $(K3IMGGEN_DIR) SOC=$(K3IMGGEN_SOC) SOC_TYPE=$(SECURITY_TYPE) CONFIG=evm CROSS_COMPILE=$(CROSS_COMPILE_32) \
-			SYSFW_DIR=$(FW_DIR)/ti-sysfw O=$(O)/k3-img-gen TI_SECURE_DEV_PKG=$(SECDEV_DIR) SYFW_DIR=$(FW_DIR)/ti-sysfw
-	$(Q)cp -v $(K3IMGGEN_DIR)/sysfw.itb $(D)
-
 tfa: $(O) $(I)
 	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=$(TFA_BOARD) $(TFA_EXTRA_ARGS) SPD=opteed all
 	$(Q)cp -v $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/release/bl31.bin $(I)
-ifneq ($(SECURITY_TYPE),gp)
-	$(SECDEV_DIR)/scripts/secure-binary-image.sh $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/release/bl31.bin $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/release/bl31.bin$(HS_EXT)
-	$(Q)cp -v $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/release/bl31.bin$(HS_EXT) $(I)
-endif
 
 optee: $(O) $(I)
 	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=$(OPTEE_PLATFORM) $(OPTEE_EXTRA_ARGS) CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y CFG_ARM64_core=y all
-	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)/
-ifneq ($(SECURITY_TYPE),gp)
-	$(SECDEV_DIR)/scripts/secure-binary-image.sh $(O)/optee/core/tee-pager_v2.bin $(O)/optee/core/tee-pager_v2.bin$(HS_EXT)
-	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin$(HS_EXT) $(I)/
+	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)
+
+u_boot_r5: $(O) $(D)
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm O=$(O)/u-boot/r5 BINMAN_INDIRS=$(FW_DIR)
+	$(Q)cp -v $(O)/u-boot/r5/tiboot3-$(SOC_NAME)-$(SECURITY_TYPE)-evm.bin $(D)/tiboot3.bin
+ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),0)
+	$(Q)cp -v $(O)/u-boot/r5/sysfw.itb $(D)
 endif
 
-dm: $(I)
-ifneq ($(DM_COMBINED_WITH_TIFS),1)
-	$(Q)cp -v $(FW_DIR)/ti-dm/$(DM_SOC_NAME)/ipc_echo_testb_mcu1_0_release_strip.xer5f $(I)
-ifneq ($(SECURITY_TYPE),gp)
-	$(SECDEV_DIR)/scripts/secure-binary-image.sh $(I)/ipc_echo_testb_mcu1_0_release_strip.xer5f $(I)/ipc_echo_testb_mcu1_0_release_strip.xer5f$(HS_EXT)
-endif
-endif
-
-u_boot_r5: $(O) $(I)
-	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm TI_SECURE_DEV_PKG=$(SECDEV_DIR) O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
-	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) ARCH=arm TI_SECURE_DEV_PKG=$(SECDEV_DIR) O=$(O)/u-boot/r5
-ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),1)
-	$(Q)cp -v $(O)/u-boot/r5/spl/u-boot-spl.bin $(I)
-else
-	$(Q)cp -v $(O)/u-boot/r5/tiboot3.bin $(D)
-endif
-
-u_boot_armv8: $(O) $(D) optee tfa dm
-	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm TI_SECURE_DEV_PKG=$(SECDEV_DIR) O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)
-	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm TI_SECURE_DEV_PKG=$(SECDEV_DIR) O=$(O)/u-boot/armv8 \
-					ATF=$(I)/bl31.bin$(HS_EXT) \
-				  TEE=$(I)/tee-pager_v2.bin$(HS_EXT) \
-				  $(DMCONF)
-	$(Q)cp -v $(O)/u-boot/armv8/tispl.bin$(HS_UBOOTEXT) $(D)/tispl.bin
-	$(Q)cp -v $(O)/u-boot/armv8/u-boot.img$(HS_UBOOTEXT) $(D)/u-boot.img
+u_boot_armv8: $(O) $(D) optee tfa
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)
+	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=arm O=$(O)/u-boot/armv8 BINMAN_INDIRS=$(FW_DIR) \
+					BL31=$(I)/bl31.bin \
+				  TEE=$(I)/tee-pager_v2.bin
+	$(Q)cp -v $(O)/u-boot/armv8/tispl.bin$(SECTYPE_EXT) $(D)/tispl.bin
+	$(Q)cp -v $(O)/u-boot/armv8/u-boot.img$(SECTYPE_EXT) $(D)/u-boot.img
 
 u_boot: u_boot_r5 u_boot_armv8
 	$(Q)echo "U-boot Build complete"
@@ -138,7 +90,6 @@ $(I): $(O)
 
 mrproper:
 	$(Q)rm -rvf $(O) $(I) $(D)
-	$(Q)cd $(K3IMGGEN_DIR) && git clean -fdx
 
 git:
 	$(Q)git submodule status|grep '^-' && git submodule init && \
