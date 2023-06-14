@@ -46,7 +46,7 @@ all: help
 	$(Q)echo "Please Select a defconfig"
 else
 all: u_boot
-	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE) BOOTTYPE=$(BOOTTYPE)"
+	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE)"
 endif
 
 %defconfig: $(CONFIG_DIR)/%defconfig $(O)
