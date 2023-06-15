@@ -158,7 +158,6 @@ The following table provides a bird's eye view of the same
 | SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
 | MULTICERTIFICATE_BOOT_CAPABLE | Is this multi-certificate boot capable chip: 0 or 1|
 | DM_COMBINED_WITH_TIFS | Is DM combined with TIFS in the firmware? 0 or 1|
-| K3IMGGEN_SOC | (hopefully gone soon) what name does k3imagegen use for this SoC?|
 | FW_TIFS_PATH | path to tifs firmware |
 | DM_SOC_NAME | DM SOC directory name in linux-firmware repo (if != SOC_NAME) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
