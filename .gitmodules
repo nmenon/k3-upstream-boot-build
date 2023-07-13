@@ -6,8 +6,7 @@
 	url = https://github.com/OP-TEE/optee_os.git
 [submodule "u-boot"]
 	path = u-boot
-	url = https://git.ti.com/cgit/ti-u-boot/ti-u-boot
-	branch = ti-u-boot-2023.04
+	url = https://source.denx.de/u-boot/u-boot.git
 [submodule "ti-linux-firmware"]
 	path = ti-linux-firmware
 	url = https://git.ti.com/cgit/processor-firmware/ti-linux-firmware
