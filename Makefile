@@ -19,6 +19,7 @@ FW_DIR=$(ROOT_DIR)/ti-linux-firmware
 
 unexport CROSS_COMPILE
 unexport CROSS_COMPILE64
+unexport ARCH
 
 # Handle verbose
 ifeq ("$(origin V)", "command line")
