@@ -63,9 +63,9 @@ u_boot_r5: $(O) $(D)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/u-boot/r5 $(UBOOT_ARMV7_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_32) O=$(O)/u-boot/r5 BINMAN_INDIRS=$(FW_DIR)
 	$(Q)cp -v $(O)/u-boot/r5/tiboot3-$(SOC_NAME)-$(SECURITY_TYPE)-evm.bin $(D)/tiboot3.bin
-ifeq ($(MULTICERTIFICATE_BOOT_CAPABLE),0)
-	$(Q)cp -v $(O)/u-boot/r5/sysfw-$(SOC_NAME)-$(SECURITY_TYPE)-evm.itb $(D)/sysfw.itb
-endif
+	$(Q)if [ -f $(O)/u-boot/r5/sysfw-$(SOC_NAME)-$(SECURITY_TYPE)-evm.itb ]; then \
+		cp -v $(O)/u-boot/r5/sysfw-$(SOC_NAME)-$(SECURITY_TYPE)-evm.itb $(D)/sysfw.itb; \
+	fi
 
 u_boot_armv8: $(O) $(D) optee tfa
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)

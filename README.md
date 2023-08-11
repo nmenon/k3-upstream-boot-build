@@ -116,31 +116,6 @@ Or for a specific defconfig:
 
 # Internal details of config file
 
-## Various boot configuration
-
-There are few combinations of Boot image organization involved here:
-
-* Multi-certificate Boot: The ROM bootloader is capable of loading
-  more than one firmware binary. In this mode, the X509 certificate
-  (tiboot3.bin) contains not just the secondary bootloader binary, but also
-  the tifs firmware binary. In the "legacy" boot, just the R5 secondary
-  bootloader(SBL) is loaded. With multi-certificate capability, the ROM
-  is capable of loading R5 bootloader (SBL), and in addition load the tifs
-  firmware along with it's configuration data to allow both R5 and TIFS firmware
-  to initialize in parallel (speeding up the boot process). This is indicated
-  by the `MULTICERTIFICATE_BOOT_CAPABLE` variable in the config files
-
-The following table provides a bird's eye view of the same
-| SoC     | Multicertificate Boot | DM and TIFS combined |
-| :---    |            :---:      |            :---:     |
-| AM65x   |           No          |           Yes        |
-| J721E   |           No          |           No         |
-| AM64x   |           Yes         |           Yes        |
-| J7200   |           Yes         |           No         |
-| AM62X   |           Yes         |           No         |
-| AM62AX  |           Yes         |           No         |
-| J721S2  |           Yes         |           No         |
-
 ## Various variables
 
 | Variable name         | Description |
@@ -148,7 +123,6 @@ The following table provides a bird's eye view of the same
 | SOC_NAME   | SoC name of the board |
 | BOARD_NAME   | Name of the board |
 | SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
-| MULTICERTIFICATE_BOOT_CAPABLE | Is this multi-certificate boot capable chip: 0 or 1|
 | FW_TIFS_PATH | path to tifs firmware |
 | DM_SOC_NAME | DM SOC directory name in linux-firmware repo (if != SOC_NAME) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
