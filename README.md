@@ -129,14 +129,6 @@ There are few combinations of Boot image organization involved here:
   firmware along with it's configuration data to allow both R5 and TIFS firmware
   to initialize in parallel (speeding up the boot process). This is indicated
   by the `MULTICERTIFICATE_BOOT_CAPABLE` variable in the config files
-* TIFS Split image: The orginal DMSC firmware had security, power and device
-  management functionality all rolled into a single firmware image. However,
-  with newer and more massive devices, it was clear that a limited land-locked
-  SRAM is in-capable of scaling to various Processor sizing requirements since
-  the data and feature support variations were massive. To better support this,
-  newer SoCs run the TIFS (Security function) only on the TIFS core and the
-  device management and power management function is run on the boot R5. This
-  is indicated by the `DM_COMBINED_WITH_TIFS` variable in the config files.
 
 The following table provides a bird's eye view of the same
 | SoC     | Multicertificate Boot | DM and TIFS combined |
@@ -157,7 +149,6 @@ The following table provides a bird's eye view of the same
 | BOARD_NAME   | Name of the board |
 | SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
 | MULTICERTIFICATE_BOOT_CAPABLE | Is this multi-certificate boot capable chip: 0 or 1|
-| DM_COMBINED_WITH_TIFS | Is DM combined with TIFS in the firmware? 0 or 1|
 | FW_TIFS_PATH | path to tifs firmware |
 | DM_SOC_NAME | DM SOC directory name in linux-firmware repo (if != SOC_NAME) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
