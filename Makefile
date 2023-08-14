@@ -36,8 +36,6 @@ CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 
 -include $(O)/.config
 
-TFA_BOARD ?= generic
-
 ifeq ($(SECURITY_TYPE),gp)
 	SECTYPE_EXT = _unsigned
 endif
