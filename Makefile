@@ -54,8 +54,8 @@ endif
 
 .PHONY: tfa
 tfa: $(O) $(I)
-	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=$(TFA_BOARD) $(TFA_EXTRA_ARGS) SPD=opteed all
-	$(Q)cp -v $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/release/bl31.bin $(I)
+	$(Q)$(MAKE) -C $(TFA_DIR) BUILD_BASE=$(O)/arm-trusted-firmware CROSS_COMPILE=$(CROSS_COMPILE_64) ARCH=aarch64 PLAT=k3 TARGET_BOARD=$(TFA_BOARD) $(TFA_EXTRA_ARGS) SPD=opteed DEBUG=1 all
+	$(Q)cp -v $(O)/arm-trusted-firmware/k3/$(TFA_BOARD)/debug/bl31.bin $(I)
 
 .PHONY: optee
 optee: $(O) $(I)
