@@ -97,9 +97,10 @@ make mysoc_myboard_gp_mmc_defconfig
 make UBOOT_DIR=<path to ti-u-boot>
 ```
 
-## Bootfiles
+## Output files
 
-boot files will be located in deploy/ folder.
+* Intermediate build artifacts will be located in build/
+* Boot files will be located in deploy/ (copy these to your SD card)
 
 # Making all platforms
 
