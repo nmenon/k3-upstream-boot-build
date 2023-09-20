@@ -8,14 +8,14 @@ OP-TEE can be specified if desired.
 # Upstream Status
 
 * U-boot: Upstream
-* trusted-firmware-cortex-a: Upstream (used to be called arm-trusted-firmware
+* Trusted-Firmware-A: Upstream (used to be called Arm-Trusted-Firmware)
 * OPTEE OS: Upstream
 * ti-linux-firmware: TI, but hopefully we should upstream the firmware pieces as well.
 
 # System pre-requisites:
 The following lists the pre-requisites for building the bootloader components
 
-* This assumes a x86_64 Linux system for build. if not, Adjust appropriately.
+* This assumes a x86_64 Linux system for build. If not, adjust appropriately.
 
 ## Compiler
 
@@ -32,8 +32,8 @@ adjusted accordingly.
 
 ## Host package dependencies
 
-* Optee: https://optee.readthedocs.io/en/latest/building/prerequisites.html
-* U-boot: https://github.com/u-boot/u-boot/blob/master/tools/docker/Dockerfile#L35 https://github.com/u-boot/u-boot/blob/master/tools/binman/binman.rst
+* OPTEE: https://optee.readthedocs.io/en/latest/building/prerequisites.html
+* U-Boot: https://github.com/u-boot/u-boot/blob/master/tools/docker/Dockerfile#L35 https://github.com/u-boot/u-boot/blob/master/tools/binman/binman.rst
 * TFA: https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/requirements.txt https://github.com/ARM-software/arm-trusted-firmware/blob/master/docs/getting_started/prerequisites.rst
 
 If getting it all correctly seems painful, unfortunately, it is.. (also see TODO)
@@ -70,8 +70,8 @@ Convention followed is: ```<soc>_<board>_<security_type>_<bootmode>_defconfig```
 
 * SoC is one of various SoC types - j721e, am64 etc.
 * Board is one of the supported boards
-* security type is one of gp (non-secure), hsfs (auth for ti key), hsse (customer/device-specific key fused)
-* bootmode is various supported bootmodes for the Board
+* Security type is one of gp (non-secure), hsfs (auth for ti key), hsse (customer/device-specific key fused)
+* Bootmode is various supported bootmodes for the board
 
 ## Building the platform
 
