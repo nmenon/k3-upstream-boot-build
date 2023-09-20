@@ -10,7 +10,6 @@ OP-TEE can be specified if desired.
 * U-boot: Upstream
 * trusted-firmware-cortex-a: Upstream (used to be called arm-trusted-firmware
 * OPTEE OS: Upstream
-* k3-image-gen: TI, but hopefully binman should be able to replace this.
 * ti-linux-firmware: TI, but hopefully we should upstream the firmware pieces as well.
 
 # System pre-requisites:
