@@ -123,8 +123,6 @@ Or for a specific defconfig:
 | SOC_NAME   | SoC name of the board |
 | BOARD_NAME   | Name of the board |
 | SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
-| FW_TIFS_PATH | path to tifs firmware |
-| DM_SOC_NAME | DM SOC directory name in linux-firmware repo (if != SOC_NAME) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
 | TFA_EXTRA_ARGS | Any extra TFA arguments to pass to build (example: K3_PM_SYSTEM_SUSPEND=1) |
 | OPTEE_PLATFORM | Name of the optee platform |
