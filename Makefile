@@ -41,11 +41,16 @@ ifeq ($(SECURITY_TYPE),gp)
 endif
 
 .PHONY: all
-ifndef SOC_NAME
-all: help
-	$(Q)echo "Please Select a defconfig"
-else
 all: u_boot
+
+.PHONY: u_boot
+ifndef SOC_NAME
+u_boot: help
+	$(Q)echo "Please Select a defconfig"
+	$(Q)echo
+	$(Q)exit 1
+else
+u_boot: u_boot_r5 u_boot_armv8
 	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE)"
 endif
 
@@ -79,10 +84,6 @@ u_boot_armv8: $(O) $(D) optee tfa
 					TEE=$(I)/tee-raw.bin
 	$(Q)cp -v $(O)/u-boot/armv8/tispl.bin$(SECTYPE_EXT) $(D)/tispl.bin
 	$(Q)cp -v $(O)/u-boot/armv8/u-boot.img$(SECTYPE_EXT) $(D)/u-boot.img
-
-.PHONY: u_boot
-u_boot: u_boot_r5 u_boot_armv8
-	$(Q)echo "U-boot Build complete"
 
 $(O):
 	$(Q)mkdir -p $(O)
