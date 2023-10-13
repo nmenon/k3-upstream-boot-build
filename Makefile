@@ -94,6 +94,27 @@ $(D):
 $(I): $(O)
 	$(Q)mkdir -p $(I)
 
+.PHONY: sdcard
+sdcard: u_boot $(I) $(D)
+# Create image with partition table
+	$(Q)dd if=/dev/zero of=$(D)/sdcard.img bs=1M count=36
+	$(Q)parted --script $(D)/sdcard.img \
+		mklabel msdos \
+		mkpart primary fat16 4MiB 100% \
+		set 1 boot on \
+		set 1 bls_boot off \
+		set 1 lba on
+# Create FAT16 boot partition
+	$(Q)dd if=/dev/zero of=$(I)/boot-partition.raw bs=1M count=32
+	$(Q)mkfs.vfat $(I)/boot-partition.raw
+# Copy boot artifacts to boot partition
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/tiboot3.bin ::tiboot3.bin
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/tispl.bin ::tispl.bin
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/u-boot.img ::u-boot.img
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/sysfw.itb ::sysfw.itb 2>/dev/null || true
+# Copy boot partition to image
+	$(Q)dd if=$(I)/boot-partition.raw of=$(D)/sdcard.img bs=1M seek=4 conv=notrunc
+
 .PHONY: mrproper
 mrproper:
 	$(Q)rm -rvf $(O) $(I) $(D)
