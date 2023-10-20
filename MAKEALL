@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_FOLDER=/tmp/upstream-boot-build/
+BASE_FOLDER="${BASE_FOLDER:-/tmp/upstream-boot-build/}"
 BUILD_FOLDER=${BASE_FOLDER}/build
 DEPLOY_FOLDER=${BASE_FOLDER}/deploy
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
