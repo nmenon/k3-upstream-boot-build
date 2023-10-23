@@ -15,7 +15,7 @@ CONFIG_DIR=$(ROOT_DIR)/configs
 TFA_DIR ?= $(ROOT_DIR)/arm-trusted-firmware
 OPTEE_DIR ?= $(ROOT_DIR)/optee_os
 UBOOT_DIR ?= $(ROOT_DIR)/u-boot
-FW_DIR=$(ROOT_DIR)/ti-linux-firmware
+FW_DIR ?= $(ROOT_DIR)/ti-linux-firmware
 
 unexport CROSS_COMPILE
 unexport CROSS_COMPILE64
@@ -41,11 +41,16 @@ ifeq ($(SECURITY_TYPE),gp)
 endif
 
 .PHONY: all
-ifndef SOC_NAME
-all: help
-	$(Q)echo "Please Select a defconfig"
-else
 all: u_boot
+
+.PHONY: u_boot
+ifndef SOC_NAME
+u_boot: help
+	$(Q)echo "Please Select a defconfig"
+	$(Q)echo
+	$(Q)exit 1
+else
+u_boot: u_boot_r5 u_boot_armv8
 	$(Q)echo "BUILD COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE)"
 endif
 
@@ -60,7 +65,7 @@ tfa: $(O) $(I)
 .PHONY: optee
 optee: $(O) $(I)
 	$(Q)$(MAKE) -C $(OPTEE_DIR) O=$(O)/optee CROSS_COMPILE=$(CROSS_COMPILE_32) CROSS_COMPILE64=$(CROSS_COMPILE_64) PLATFORM=$(OPTEE_PLATFORM) $(OPTEE_EXTRA_ARGS) CFG_TEE_CORE_LOG_LEVEL=2 CFG_TEE_CORE_DEBUG=y CFG_ARM64_core=y all
-	$(Q)cp -v $(O)/optee/core/tee-pager_v2.bin $(I)
+	$(Q)cp -v $(O)/optee/core/tee-raw.bin $(I)
 
 .PHONY: u_boot_r5
 u_boot_r5: $(O) $(D)
@@ -76,13 +81,9 @@ u_boot_armv8: $(O) $(D) optee tfa
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) O=$(O)/u-boot/armv8 $(UBOOT_ARMV8_DEFCONFIG)
 	$(Q)$(MAKE) -C $(UBOOT_DIR) CROSS_COMPILE=$(CROSS_COMPILE_64) O=$(O)/u-boot/armv8 BINMAN_INDIRS=$(FW_DIR) \
 					BL31=$(I)/bl31.bin \
-				  TEE=$(I)/tee-pager_v2.bin
+					TEE=$(I)/tee-raw.bin
 	$(Q)cp -v $(O)/u-boot/armv8/tispl.bin$(SECTYPE_EXT) $(D)/tispl.bin
 	$(Q)cp -v $(O)/u-boot/armv8/u-boot.img$(SECTYPE_EXT) $(D)/u-boot.img
-
-.PHONY: u_boot
-u_boot: u_boot_r5 u_boot_armv8
-	$(Q)echo "U-boot Build complete"
 
 $(O):
 	$(Q)mkdir -p $(O)
@@ -92,6 +93,27 @@ $(D):
 
 $(I): $(O)
 	$(Q)mkdir -p $(I)
+
+.PHONY: sdcard
+sdcard: u_boot $(I) $(D)
+# Create image with partition table
+	$(Q)dd if=/dev/zero of=$(D)/sdcard.img bs=1M count=36
+	$(Q)parted --script $(D)/sdcard.img \
+		mklabel msdos \
+		mkpart primary fat16 4MiB 100% \
+		set 1 boot on \
+		set 1 bls_boot off \
+		set 1 lba on
+# Create FAT16 boot partition
+	$(Q)dd if=/dev/zero of=$(I)/boot-partition.raw bs=1M count=32
+	$(Q)mkfs.vfat $(I)/boot-partition.raw
+# Copy boot artifacts to boot partition
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/tiboot3.bin ::tiboot3.bin
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/tispl.bin ::tispl.bin
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/u-boot.img ::u-boot.img
+	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/sysfw.itb ::sysfw.itb 2>/dev/null || true
+# Copy boot partition to image
+	$(Q)dd if=$(I)/boot-partition.raw of=$(D)/sdcard.img bs=1M seek=4 conv=notrunc
 
 .PHONY: mrproper
 mrproper:

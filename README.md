@@ -80,15 +80,46 @@ make mysoc_myboard_gp_mmc_defconfig
 make
 ```
 
+### Building an SD card image
+
+The K3 ROM when booting from an SD card in filesystem boot mode can be very
+particular about the format it expects. To ease generation of a working
+SD card this tool can provide an simple SD card image.
+
+To build an SD card image your host system will need mtools, parted, and
+dosfstools installed:
+
+```
+sudo apt install mtools parted dosfstools
+```
+
+After selecting your platform defconfig as above, use the `sdcard` target:
+
+```
+make sdcard
+```
+
+The resulting SD card will be located at `deploy/sdcard.img` and can
+be written directly to an SD card. For instance using dd:
+
+```
+dd if=deploy/sdcard.img of=/dev/sd<card>
+```
+
+Note: This SD card does not contain an OS. U-Boot will attempt to load
+the OS from media as specified by U-Boot stdboot. One can add a uEnv.txt
+file to the SD card boot partition to further direct the boot process.
+
 ### To override a repository location
-To use a different repository location for U-Boot, Arm Trusted Firmware, or
-OP-TEE, define the appropriate variables below
+To use a different repository location for U-Boot, Arm Trusted Firmware,
+OP-TEE, or ti-linux-firmware define the appropriate variables below
 
 | Repo | Location variable |
 | :--- | :--- |
 | arm trusted firmware | TFA_DIR |
 | optee OS | OPTEE_DIR |
 | U-Boot | UBOOT_DIR |
+| ti-linux-firmware | FW_DIR |
 
 For example, to use the TI SDK repo for u-boot, use:
 
