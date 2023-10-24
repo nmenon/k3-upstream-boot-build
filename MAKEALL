@@ -54,9 +54,12 @@ do
 done
 
 echo
+echo "==> Git Configuration of Repos:"
+cat $BASE_FOLDER/git-revs.txt
+
+echo
 echo "==> Result of Builds:"
 cat $SUMMARY_FILE
-
 echo
 echo
 echo "==> All done: See $DEPLOY_FOLDER for files and $BUILD_FOLDER for build artifacts. $BASE_FOLDER for build logs"
