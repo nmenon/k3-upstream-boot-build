@@ -19,6 +19,7 @@ build_config() {
 }
 
 mkdir -p $BASE_FOLDER
+make gitdesc 2>$BASE_FOLDER/git-revs.txt
 for config in $DEFCONFIGS
 do
 	echo Building for "$config"
