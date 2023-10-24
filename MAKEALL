@@ -33,7 +33,9 @@ fail=0
 echo
 echo "==> Attempt to summarize Error Logs:"
 SUMMARY_FILE=$BASE_FOLDER/build-summary.txt
+ERROR_FILE=$BASE_FOLDER/error-summary.txt
 echo >$SUMMARY_FILE
+echo >$ERROR_FILE
 for config in $DEFCONFIGS
 do
 	LOG=$BASE_FOLDER/$config.txt
@@ -41,9 +43,9 @@ do
 	success=`echo $res|grep 'BUILD COMPLETE:'`
 	if [ x"$success" == x ]; then
 		((fail++))
-		echo "===> $config ($LOG) <===="
+		echo "===> $config ($LOG) <====" | tee -a "$ERROR_FILE"
 		result="FAIL"
-		cat $LOG|grep -v removed|grep -v '^\s'|grep -v Leaving|grep -v Entering|grep -v '^#'
+		cat $LOG|grep -v removed|grep -v '^\s'|grep -v Leaving|grep -v Entering|grep -v '^#' | tee -a "$ERROR_FILE"
 	else
 		folder_name=`echo $config|sed -e "s/_defconfig//g"`
 		((pass++))
