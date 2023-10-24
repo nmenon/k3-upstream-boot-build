@@ -27,5 +27,41 @@ do
 	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt
 done
 
-echo "All done: See $DEPLOY_FOLDER for files and $BUILD_FOLDER for build artifacts. $BASE_FOLDER for build logs"
-tail -n 1 $BASE_FOLDER/*.txt
+count=0
+pass=0
+fail=0
+echo
+echo "==> Attempt to summarize Error Logs:"
+SUMMARY_FILE=$BASE_FOLDER/build-summary.txt
+echo >$SUMMARY_FILE
+for config in $DEFCONFIGS
+do
+	LOG=$BASE_FOLDER/$config.txt
+	res=`tail -n 1 $LOG`
+	success=`echo $res|grep 'BUILD COMPLETE:'`
+	if [ x"$success" == x ]; then
+		((fail++))
+		echo "===> $config ($LOG) <===="
+		result="FAIL"
+		cat $LOG|grep -v removed|grep -v '^\s'|grep -v Leaving|grep -v Entering|grep -v '^#'
+	else
+		folder_name=`echo $config|sed -e "s/_defconfig//g"`
+		((pass++))
+		result="PASS: $DEPLOY_FOLDER/$folder_name"
+	fi
+	((count++))
+	echo $config: $result>>$SUMMARY_FILE
+done
+
+echo
+echo "==> Result of Builds:"
+cat $SUMMARY_FILE
+
+echo
+echo
+echo "==> All done: See $DEPLOY_FOLDER for files and $BUILD_FOLDER for build artifacts. $BASE_FOLDER for build logs"
+echo "==> Summary of Builds: ($count builds: $pass Passed, $fail Failed)"
+
+if [ $fail -gt 0 ]; then
+	exit -1
+fi
