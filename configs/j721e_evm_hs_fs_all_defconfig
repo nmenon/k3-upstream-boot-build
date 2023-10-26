@@ -1,0 +1,11 @@
+# J721e EVM configuration for HS-FS devices
+SOC_NAME=j721e
+BOARD_NAME=evm
+SECURITY_TYPE=hs-fs
+
+TFA_BOARD=generic
+
+OPTEE_PLATFORM=k3-j721e
+
+UBOOT_ARMV7_DEFCONFIG=j721e_evm_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=j721e_evm_a72_defconfig
