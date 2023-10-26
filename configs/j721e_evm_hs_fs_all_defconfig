@@ -1,5 +1,5 @@
 # J721e EVM configuration for HS-FS devices
-SOC_NAME=j721e
+SOC_NAME=j721e_sr2
 BOARD_NAME=evm
 SECURITY_TYPE=hs-fs
 
