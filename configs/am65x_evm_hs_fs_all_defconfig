@@ -1,0 +1,11 @@
+# EVM configuration for HS-FS devices
+SOC_NAME=am65x_sr2
+BOARD_NAME=evm
+SECURITY_TYPE=hs-fs
+
+TFA_BOARD=generic
+
+OPTEE_PLATFORM=k3-am65x
+
+UBOOT_ARMV7_DEFCONFIG=am65x_evm_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=am65x_evm_a53_defconfig
