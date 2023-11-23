@@ -1,0 +1,11 @@
+# J721e BeagleBone-AI64 configuration for GP devices
+SOC_NAME=j721e
+BOARD_NAME=evm
+SECURITY_TYPE=gp
+
+TFA_BOARD=generic
+
+OPTEE_PLATFORM=k3-j721e
+
+UBOOT_ARMV7_DEFCONFIG=j721e_beagleboneai64_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=j721e_beagleboneai64_a72_defconfig
