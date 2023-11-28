@@ -12,4 +12,4 @@
 [submodule "ti-linux-firmware"]
 	path = ti-linux-firmware
 	url = https://git.ti.com/cgit/processor-firmware/ti-linux-firmware
-	branch = ti-linux-firmware
+	branch = ti-linux-firmware-next
