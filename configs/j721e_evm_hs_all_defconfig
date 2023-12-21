@@ -1,5 +1,5 @@
 # J721e EVM configuration for HS devices
-SOC_NAME=j721e_sr2
+SOC_NAME=j721e_sr1_1
 BOARD_NAME=evm
 SECURITY_TYPE=hs
 
