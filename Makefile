@@ -77,6 +77,7 @@ u_boot_r5: $(O) $(D)
 	$(Q)if [ -f $(O)/u-boot/r5/sysfw-$(SOC_NAME)-$(SECURITY_TYPE)-evm.itb ]; then \
 		cp -v $(O)/u-boot/r5/sysfw-$(SOC_NAME)-$(SECURITY_TYPE)-evm.itb $(D)/sysfw.itb; \
 	fi
+	$(Q)cp -v $(O)/u-boot/r5/*-capsule.bin $(D) 2>/dev/null || true
 
 .PHONY: u_boot_armv8
 u_boot_armv8: $(O) $(D) optee tfa
@@ -86,6 +87,7 @@ u_boot_armv8: $(O) $(D) optee tfa
 					TEE=$(I)/tee-raw.bin
 	$(Q)cp -v $(O)/u-boot/armv8/tispl.bin$(SECTYPE_EXT) $(D)/tispl.bin
 	$(Q)cp -v $(O)/u-boot/armv8/u-boot.img$(SECTYPE_EXT) $(D)/u-boot.img
+	$(Q)cp -v $(O)/u-boot/armv8/*-capsule.bin $(D) 2>/dev/null || true
 
 $(O):
 	$(Q)mkdir -p $(O)
@@ -99,23 +101,36 @@ $(I): $(O)
 .PHONY: sdcard
 sdcard: u_boot $(I) $(D)
 # Create image with partition table
-	$(Q)dd if=/dev/zero of=$(D)/sdcard.img bs=1M count=36
+	$(Q)dd if=/dev/zero of=$(D)/sdcard.img bs=1M count=28
 	$(Q)parted --script $(D)/sdcard.img \
 		mklabel msdos \
-		mkpart primary fat16 4MiB 100% \
+		mkpart primary fat16 4MiB 20MiB \
+		mkpart primary fat16 20MiB 100% \
 		set 1 boot on \
 		set 1 bls_boot off \
-		set 1 lba on
+		set 1 lba on \
+		set 2 esp on
 # Create FAT16 boot partition
-	$(Q)dd if=/dev/zero of=$(I)/boot-partition.raw bs=1M count=32
+	$(Q)dd if=/dev/zero of=$(I)/boot-partition.raw bs=1M count=16
 	$(Q)mkfs.vfat $(I)/boot-partition.raw
+# Create FAT16 ESP partition
+	$(Q)dd if=/dev/zero of=$(I)/esp-partition.raw bs=1M count=8
+	$(Q)mkfs.vfat $(I)/esp-partition.raw
 # Copy boot artifacts to boot partition
 	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/tiboot3.bin ::tiboot3.bin
 	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/tispl.bin ::tispl.bin
 	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/u-boot.img ::u-boot.img
 	$(Q)mcopy -i $(I)/boot-partition.raw $(D)/sysfw.itb ::sysfw.itb 2>/dev/null || true
+	$(Q)mcopy -i $(I)/boot-partition.raw scripts/srf_uenv.txt ::uEnv.txt
 # Copy boot partition to image
 	$(Q)dd if=$(I)/boot-partition.raw of=$(D)/sdcard.img bs=1M seek=4 conv=notrunc
+# Copy capsules to ESP partition
+	$(Q)mmd -i $(I)/esp-partition.raw ::EFI
+	$(Q)mmd -i $(I)/esp-partition.raw ::EFI/UpdateCapsule
+	$(Q)mcopy -i $(I)/esp-partition.raw $(D)/*-capsule.bin ::EFI/UpdateCapsule 2>/dev/null || true
+# Copy esp partition to image
+	$(Q)dd if=$(I)/esp-partition.raw of=$(D)/sdcard.img bs=1M seek=20 conv=notrunc
+	$(Q)echo "SDCARD IMG COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE)"
 
 .PHONY: mrproper
 mrproper:

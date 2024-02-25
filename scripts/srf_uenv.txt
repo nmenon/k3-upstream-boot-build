@@ -1,0 +1,7 @@
+# Flash firmware via EFI capsule update
+# Assumes ESP partition is second partition on mmc 1
+#
+setvars=setenv -e -nv -bs -rt OsIndications =0x0000000000000004
+setboot=efidebug boot add -b 1001 cap mmc 1:2 xxx && efidebug boot next 1001
+update=efidebug capsule disk-update
+uenvcmd=run setboot setvars update
