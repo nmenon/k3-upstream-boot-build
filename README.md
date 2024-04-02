@@ -12,6 +12,8 @@ OP-TEE can be specified if desired.
 * OPTEE OS: Upstream
 * ti-linux-firmware: TI, but hopefully we should upstream the firmware pieces as well.
 
+![build status](https://github.com/nmenon/k3-upstream-boot-build/actions/workflows/main.yml/badge.svg)
+
 # System pre-requisites:
 The following lists the pre-requisites for building the bootloader components
 
