@@ -6,10 +6,6 @@ override O := $(abspath $(O))
 I ?= $(O)/intermediate
 override I := $(abspath $(I))
 
-# Final deployment binaries
-D ?= deploy
-override D := $(abspath $(D))
-
 ROOT_DIR= $(shell pwd)
 CONFIG_DIR=$(ROOT_DIR)/configs
 TFA_DIR ?= $(ROOT_DIR)/arm-trusted-firmware
@@ -39,6 +35,12 @@ CROSS_COMPILE_32 ?= arm-none-linux-gnueabihf-
 ifeq ($(SECURITY_TYPE),gp)
 	SECTYPE_EXT = _unsigned
 endif
+
+# Final deployment binaries
+ifndef D
+D = deploy/$(SOC_NAME)_$(BOARD_NAME)_$(SECURITY_TYPE)
+endif
+override D := $(abspath $(D))
 
 .PHONY: all
 all: u_boot
