@@ -11,19 +11,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y make build-essential python3 \
-            python3-pyelftools yamllint libgnutls28-dev u-boot-tools mtools
-      - name: Setup Cross compilers
-        run: |
-          pushd /tmp
-          curl -Lo gcc-arm-none-linux-gnueabihf.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz"
-          curl -Lo gcc-aarch64-none-linux-gnu.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz"
-          sudo mkdir /opt/gcc-arm-none-linux-gnueabihf
-          sudo tar xf gcc-arm-none-linux-gnueabihf.tar.xz --strip-components=1 -C /opt/gcc-arm-none-linux-gnueabihf
-          sudo mkdir /opt/gcc-aarch64-none-linux-gnu
-          sudo tar xf gcc-aarch64-none-linux-gnu.tar.xz --strip-components=1 -C /opt/gcc-aarch64-none-linux-gnu
-          echo "/opt/gcc-arm-none-linux-gnueabihf/bin" >> $GITHUB_PATH
-          echo "/opt/gcc-aarch64-none-linux-gnu/bin" >> $GITHUB_PATH
-          popd
+            python3-pyelftools yamllint libgnutls28-dev u-boot-tools mtools \
+            gcc-aarch64-linux-gnu gcc-arm-none-eabi
       - name: Cache git repos
         uses: actions/cache@v4
         with:
@@ -33,6 +22,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Update git submodules
         run: make git
+      - name: Setup cross compiler environment vars
+        run: |
+          echo "CROSS_COMPILE_64=aarch64-linux-gnu-" >> $GITHUB_ENV
+          echo "CROSS_COMPILE_32=arm-none-eabi-" >> $GITHUB_ENV
       - name: Build all configs
         run: ./MAKEALL
       - name: Save build summary
