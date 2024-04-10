@@ -1,6 +1,6 @@
-# J784s4 EVM configuration for HS-FS devices
+# AM69 SK configuration for HS-FS devices
 SOC_NAME=j784s4
-BOARD_NAME=evm
+BOARD_NAME=sk
 SECURITY_TYPE=hs-fs
 
 TFA_BOARD=j784s4
