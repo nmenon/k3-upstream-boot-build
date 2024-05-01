@@ -24,11 +24,8 @@ make gitdesc 2>$BASE_FOLDER/git-revs.txt
 for config in $DEFCONFIGS
 do
 	echo Building for "$config"
-	# Wish we could run this in parallel, but k3imggen gets in the way
-	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt &
+	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt
 done
-
-wait
 
 count=0
 pass=0

@@ -1,6 +1,6 @@
 # J721e BeagleBone-AI64 configuration for GP devices
 SOC_NAME=j721e
-BOARD_NAME=evm
+BOARD_NAME=beagleboneai64
 SECURITY_TYPE=gp
 
 TFA_BOARD=generic
