@@ -1,0 +1,11 @@
+# J721e SK configuration for GP devices
+SOC_NAME=j721e
+BOARD_NAME=sk
+SECURITY_TYPE=gp
+
+TFA_BOARD=generic
+
+OPTEE_PLATFORM=k3-j721e
+
+UBOOT_ARMV7_DEFCONFIG=j721e_sk_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=j721e_sk_a72_defconfig

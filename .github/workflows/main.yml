@@ -68,6 +68,11 @@ jobs:
         with:
           name: j721e_evm_gp
           path: /tmp/upstream-boot-build/deploy/j721e_evm_gp_all
+      - name: Deploy j721e_sk_gp firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: j721e_sk_gp
+          path: /tmp/upstream-boot-build/deploy/j721e_sk_gp_all
       - name: Deploy j721e_beagleboneai64_gp firmware
         uses: actions/upload-artifact@v4
         with:
