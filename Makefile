@@ -130,6 +130,8 @@ sdcard: u_boot $(I) $(D)
 	$(Q)mcopy -i $(I)/esp-partition.raw $(D)/*-capsule.bin ::EFI/UpdateCapsule 2>/dev/null || true
 # Copy esp partition to image
 	$(Q)dd if=$(I)/esp-partition.raw of=$(D)/sdcard.img bs=1M seek=20 conv=notrunc
+# Save a bit of disk space by compressing the sdcard image
+	$(Q)xz -e $(D)/sdcard.img
 	$(Q)echo "SDCARD IMG COMPLETE: SoC=$(SOC_NAME) Board=$(BOARD_NAME) SECURITY=$(SECURITY_TYPE)"
 
 .PHONY: mrproper
