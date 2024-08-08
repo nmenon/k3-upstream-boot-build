@@ -17,6 +17,11 @@ build_config() {
 	make -j`nproc` O=$build_path D=$deploy_path $config
 	make -j`nproc` O=$build_path D=$deploy_path
 	make -j`nproc` O=$build_path D=$deploy_path sdcard
+	# Save on disk space by dropping the build artifacts unless needed.
+	if [ -z "$KEEP_BUILD_ARTIFACTS" ]; then
+		# Run this off in parallel while we start up the next build.
+		rm -rf $build_path &
+	fi
 }
 
 mkdir -p $BASE_FOLDER
