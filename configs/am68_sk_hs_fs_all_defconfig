@@ -1,0 +1,13 @@
+# AM68-sk configuration for HS-FS devices
+SOC_NAME=j721s2
+BOARD_NAME=evm
+SECURITY_TYPE=hs-fs
+
+TFA_BOARD=generic
+TFA_EXTRA_ARGS="K3_USART=0x8"
+
+OPTEE_PLATFORM=k3-j784s4  # Intentionally using j784s4
+OPTEE_EXTRA_ARGS="CFG_CONSOLE_UART=0x8"
+
+UBOOT_ARMV7_DEFCONFIG=am68_sk_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=am68_sk_a72_defconfig

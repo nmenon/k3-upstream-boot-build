@@ -1,0 +1,96 @@
+name: Build Upstream
+run-name: Running ${{ github.workflow }} by ${{ github.actor }}
+on: [push]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job triggered by ${{ github.event_name }} event"
+      - run: echo "Building from branch ${{ github.ref }}"
+      - name: Install missing packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make build-essential python3 \
+            python3-pyelftools yamllint libgnutls28-dev u-boot-tools mtools \
+            gcc-aarch64-linux-gnu gcc-arm-none-eabi
+      - name: Cache git repos
+        uses: actions/cache@v4
+        with:
+          path: .git
+          key: git-folder
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Update git submodules
+        run: make git
+      - name: Setup cross compiler environment vars
+        run: |
+          echo "CROSS_COMPILE_64=aarch64-linux-gnu-" >> $GITHUB_ENV
+          echo "CROSS_COMPILE_32=arm-none-eabi-" >> $GITHUB_ENV
+      - name: Build all configs
+        run: ./MAKEALL
+      - name: Save build summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build_results
+          path: /tmp/upstream-boot-build/build-summary.txt
+      - name: Save build errors
+        uses: actions/upload-artifact@v4
+        with:
+          name: Error_results
+          path: /tmp/upstream-boot-build/error-summary.txt
+      - name: Deploy am64x_evm_hs_fs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am64x_evm_hs_fs
+          path: /tmp/upstream-boot-build/deploy/am64x_evm_hs_fs_all
+      - name: Deploy am62x_evm_hsfs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am62x_evm_hsfs
+          path: /tmp/upstream-boot-build/deploy/am62x_evm_hsfs_all
+      - name: Deploy am62x_beagleplay_gp firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am62x_beagleplay_gp
+          path: /tmp/upstream-boot-build/deploy/am62x_beagleplay_gp_all
+      - name: Deploy am62ax_evm_hs_fs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am62ax_evm_hs_fs
+          path: /tmp/upstream-boot-build/deploy/am62ax_evm_hs_fs_all
+      - name: Deploy am62px_evm_hsfs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am62px_evm_hsfs
+          path: /tmp/upstream-boot-build/deploy/am62px_evm_hsfs_all
+      - name: Deploy j721e_evm_gp firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: j721e_evm_gp
+          path: /tmp/upstream-boot-build/deploy/j721e_evm_gp_all
+      - name: Deploy j721e_sk_gp firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: j721e_sk_gp
+          path: /tmp/upstream-boot-build/deploy/j721e_sk_gp_all
+      - name: Deploy j721e_beagleboneai64_gp firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: j721e_beagleboneai64_gp
+          path: /tmp/upstream-boot-build/deploy/j721e_beagleboneai64_gp_all
+      - name: Deploy j7200_evm_hs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: j7200_evm_hs
+          path: /tmp/upstream-boot-build/deploy/j7200_evm_hs_all
+      - name: Deploy j721s2_evm_hs_fs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: j721s2_evm_hs_fs
+          path: /tmp/upstream-boot-build/deploy/j721s2_evm_hs_fs_all
+      - name: Deploy am68_sk_hs_fs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am68_sk_hs_fs
+          path: /tmp/upstream-boot-build/deploy/am68_sk_hs_fs_all
+      - run: echo "This job's status is ${{ job.status }}."

@@ -1,6 +1,6 @@
 # am62x EVM configuration for GP devices
 SOC_NAME=am62x
-BOARD_NAME=evm
+BOARD_NAME=beagleplay
 SECURITY_TYPE=gp
 
 TFA_BOARD=lite

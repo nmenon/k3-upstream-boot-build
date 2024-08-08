@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_FOLDER="${BASE_FOLDER:-/tmp/upstream-boot-build/}"
+BASE_FOLDER="${BASE_FOLDER:-/tmp/upstream-boot-build}"
 BUILD_FOLDER=${BASE_FOLDER}/build
 DEPLOY_FOLDER=${BASE_FOLDER}/deploy
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -16,6 +16,7 @@ build_config() {
 	make -j`nproc` O=$build_path D=$deploy_path mrproper
 	make -j`nproc` O=$build_path D=$deploy_path $config
 	make -j`nproc` O=$build_path D=$deploy_path
+	make -j`nproc` O=$build_path D=$deploy_path sdcard
 }
 
 mkdir -p $BASE_FOLDER
@@ -24,11 +25,8 @@ make gitdesc 2>$BASE_FOLDER/git-revs.txt
 for config in $DEFCONFIGS
 do
 	echo Building for "$config"
-	# Wish we could run this in parallel, but k3imggen gets in the way
-	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt &
+	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt
 done
-
-wait
 
 count=0
 pass=0
@@ -43,7 +41,7 @@ for config in $DEFCONFIGS
 do
 	LOG=$BASE_FOLDER/$config.txt
 	res=`tail -n 1 $LOG`
-	success=`echo $res|grep 'BUILD COMPLETE:'`
+	success=`echo $res|grep 'SDCARD IMG COMPLETE:'`
 	if [ x"$success" == x ]; then
 		((fail++))
 		echo "===> $config ($LOG) <====" | tee -a "$ERROR_FILE"

@@ -12,6 +12,8 @@ OP-TEE can be specified if desired.
 * OPTEE OS: Upstream
 * ti-linux-firmware: TI, but hopefully we should upstream the firmware pieces as well.
 
+![build status](https://github.com/nmenon/k3-upstream-boot-build/actions/workflows/main.yml/badge.svg)
+
 # System pre-requisites:
 The following lists the pre-requisites for building the bootloader components
 
@@ -19,11 +21,23 @@ The following lists the pre-requisites for building the bootloader components
 
 ## Compiler
 
-https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
-
 Download the following:
 * AArch32 GNU/Linux target with hard float (arm-none-linux-gnueabihf)
 * AArch64 GNU/Linux target (aarch64-none-linux-gnu)
+
+### Ubuntu
+Ubuntu provides ARM cross compiler packages.  To use, install with:
+
+    apt install gcc-aarch64-linux-gnu gcc-arm-none-eabi
+
+and set your cross compiler env variables:
+
+    export CROSS_COMPILE_64=aarch64-linux-gnu-
+
+    export CROSS_COMPILE_32=arm-none-eabi-
+
+### Directly from arm.com
+https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 
 Also see: https://www.linaro.org/downloads/#gnu_and_llvm You could
 optionally use https://snapshots.linaro.org/gnu-toolchain/, but
