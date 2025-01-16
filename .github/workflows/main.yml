@@ -1,6 +1,27 @@
 name: Build Upstream
 run-name: Running ${{ github.workflow }} by ${{ github.actor }}
-on: [push]
+on:
+  push:
+# +-------------------------------------------+
+# |          GitHub Actions Cron Job          |
+# |                                           |
+# |    Schedule: 0 0 * * * (Every midnight)   |
+# |                                           |
+# |       ┌───────────── Minute (0 - 59)      |
+# |       │ ┌───────────── Hour (0 - 23)      |
+# |       │ │ ┌───────────── Day of month     |
+# |       │ │ │ ┌───────────── Month (1-12)   |
+# |       │ │ │ │ ┌───────────── Day of week  |
+# |       │ │ │ │ │                           |
+# |       │ │ │ │ │                           |
+# |       0 0 * * *                           |
+# +-------------------------------------------+
+  schedule:
+    # Example cron expressions:
+    # - '0 0 * * *'   # Run every day at midnight UTC
+    # - '15 3 * * *'  # Run every day at 3:15 AM UTC
+    # - '0 */6 * * *' # Run every 6 hours
+    - cron: '0 0 * * 1'  # Run every week at midnight UTC
 jobs:
   Build:
     runs-on: ubuntu-latest
