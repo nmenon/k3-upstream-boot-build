@@ -41,8 +41,11 @@ jobs:
           key: git-folder
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Update git submodules
+      - name: Update git submodules on gitpush AND cron job
         run: make git
+      - name: Update git submodules to latest if it is a weekly cron job
+        if: github.event_name == 'schedule'
+        run: make gitsync
       - name: Setup cross compiler environment vars
         run: |
           echo "CROSS_COMPILE_64=aarch64-linux-gnu-" >> $GITHUB_ENV
