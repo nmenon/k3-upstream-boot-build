@@ -117,4 +117,9 @@ jobs:
         with:
           name: am68_sk_hs_fs
           path: /tmp/upstream-boot-build/deploy/am68_sk_hs_fs_all
+      - name: Deploy am67a_beagleyai_hs_fs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am67a_beagleyai_hs_fs
+          path: /tmp/upstream-boot-build/deploy/am67a_beagleyai_hs_fs_all
       - run: echo "This job's status is ${{ job.status }}."
