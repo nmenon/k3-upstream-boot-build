@@ -1,4 +1,4 @@
-# J784S4 SK-AM69 configuration for HS-FS devices
+# SK-AM69 configuration for HS-FS devices
 SOC_NAME=j784s4
 BOARD_NAME=am69_sk
 SECURITY_TYPE=hs-fs
