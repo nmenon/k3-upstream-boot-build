@@ -1,0 +1,11 @@
+# J722s BeagleY-AI configuration for HS-FS devices
+SOC_NAME=j722s
+BOARD_NAME=beagley-ai
+SECURITY_TYPE=hs-fs
+
+TFA_BOARD=lite
+
+OPTEE_PLATFORM=k3-am62x  # Intentionally used
+
+UBOOT_ARMV7_DEFCONFIG=am67a_beagley_ai_r5_defconfig
+UBOOT_ARMV8_DEFCONFIG=am67a_beagley_ai_a53_defconfig

@@ -1,6 +1,27 @@
 name: Build Upstream
 run-name: Running ${{ github.workflow }} by ${{ github.actor }}
-on: [push]
+on:
+  push:
+# +-------------------------------------------+
+# |          GitHub Actions Cron Job          |
+# |                                           |
+# |    Schedule: 0 0 * * * (Every midnight)   |
+# |                                           |
+# |       ┌───────────── Minute (0 - 59)      |
+# |       │ ┌───────────── Hour (0 - 23)      |
+# |       │ │ ┌───────────── Day of month     |
+# |       │ │ │ ┌───────────── Month (1-12)   |
+# |       │ │ │ │ ┌───────────── Day of week  |
+# |       │ │ │ │ │                           |
+# |       │ │ │ │ │                           |
+# |       0 0 * * *                           |
+# +-------------------------------------------+
+  schedule:
+    # Example cron expressions:
+    # - '0 0 * * *'   # Run every day at midnight UTC
+    # - '15 3 * * *'  # Run every day at 3:15 AM UTC
+    # - '0 */6 * * *' # Run every 6 hours
+    - cron: '0 0 * * 1'  # Run every week at midnight UTC
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -12,7 +33,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y make build-essential python3 \
             python3-pyelftools yamllint libgnutls28-dev u-boot-tools mtools \
-            gcc-aarch64-linux-gnu gcc-arm-none-eabi
+            gcc-aarch64-linux-gnu gcc-arm-none-eabi xz-utils
       - name: Cache git repos
         uses: actions/cache@v4
         with:
@@ -20,8 +41,11 @@ jobs:
           key: git-folder
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Update git submodules
+      - name: Update git submodules on gitpush AND cron job
         run: make git
+      - name: Update git submodules to latest if it is a weekly cron job
+        if: github.event_name == 'schedule'
+        run: make gitsync
       - name: Setup cross compiler environment vars
         run: |
           echo "CROSS_COMPILE_64=aarch64-linux-gnu-" >> $GITHUB_ENV
@@ -93,4 +117,9 @@ jobs:
         with:
           name: am68_sk_hs_fs
           path: /tmp/upstream-boot-build/deploy/am68_sk_hs_fs_all
+      - name: Deploy am67a_beagleyai_hs_fs firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: am67a_beagleyai_hs_fs
+          path: /tmp/upstream-boot-build/deploy/am67a_beagleyai_hs_fs_all
       - run: echo "This job's status is ${{ job.status }}."

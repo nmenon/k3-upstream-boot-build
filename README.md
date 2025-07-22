@@ -100,11 +100,11 @@ The K3 ROM when booting from an SD card in filesystem boot mode can be very
 particular about the format it expects. To ease generation of a working
 SD card this tool can provide an simple SD card image.
 
-To build an SD card image your host system will need mtools, parted, and
-dosfstools installed:
+To build an SD card image your host system will need xz-utils, mtools,
+parted, and dosfstools installed:
 
 ```
-sudo apt install mtools parted dosfstools
+sudo apt install mtools parted dosfstools xz-utils
 ```
 
 After selecting your platform defconfig as above, use the `sdcard` target:

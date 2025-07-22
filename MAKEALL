@@ -17,15 +17,33 @@ build_config() {
 	make -j`nproc` O=$build_path D=$deploy_path $config
 	make -j`nproc` O=$build_path D=$deploy_path
 	make -j`nproc` O=$build_path D=$deploy_path sdcard
+	# Save on disk space by dropping the build artifacts unless needed.
+	if [ -z "$KEEP_BUILD_ARTIFACTS" ]; then
+		# Run this off in parallel while we start up the next build.
+		rm -rf $build_path &
+	fi
 }
 
 mkdir -p $BASE_FOLDER
 make gitdesc 2>$BASE_FOLDER/git-revs.txt
 
+C_T=`echo $DEFCONFIGS|wc -w`
+C_C=1
+
+ETA="Unknown"
+T1=`date +%s`
+AVG=0
 for config in $DEFCONFIGS
 do
 	echo Building for "$config"
-	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt
+	build_config $config 2>&1 |tee $BASE_FOLDER/$config.txt | sed -e "s,^,\[$C_C\/$C_T][Eta: $ETA] $config: ,g"
+	T2=`date +%s`
+	TD=`expr $T2 - $T1`
+	T_AVG=`expr $TD / $C_C`
+	C_REM=`expr $C_T - $C_C`
+	T_REM=`expr $C_REM \* $T_AVG`
+	ETA=`date --date="$T_REM seconds" "+%Y-%m-%d/%H:%M:%S"`
+	C_C=`expr $C_C + 1`
 done
 
 count=0
@@ -67,6 +85,10 @@ echo
 echo
 echo "==> All done: See $DEPLOY_FOLDER for files and $BUILD_FOLDER for build artifacts. $BASE_FOLDER for build logs"
 echo "==> Summary of Builds: ($count builds: $pass Passed, $fail Failed)"
+
+D_AVG=`date -d@$T_AVG -u +%H:%M:%S`
+D_D=`date -d@$TD -u +%H:%M:%S`
+echo "===> Total Build time: $D_D, total builds=$C_T, Avergage time per build: $D_AVG"
 
 if [ $fail -gt 0 ]; then
 	exit -1
