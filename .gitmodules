@@ -8,7 +8,7 @@
 [submodule "u-boot"]
 	path = u-boot
 	url = https://github.com/u-boot/u-boot.git
-	branch = next
+	branch = master
 [submodule "ti-linux-firmware"]
 	path = ti-linux-firmware
 	url = https://git.ti.com/cgit/processor-firmware/ti-linux-firmware
