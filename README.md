@@ -169,7 +169,7 @@ Or for a specific defconfig:
 | BOARD_NAME   | Name of the board |
 | SECURITY_TYPE   | What kind of security type is the chip? (gp, hs-fs, hs) |
 | TFA_BOARD | What is the board name used in Trusted-firmware cortex-a? |
-| TFA_EXTRA_ARGS | Any extra TFA arguments to pass to build (example: K3_PM_SYSTEM_SUSPEND=1) |
+| TFA_EXTRA_ARGS | Any extra TFA arguments to pass to build (example: K3_USART=1) |
 | OPTEE_PLATFORM | Name of the optee platform |
 | OPTEE_EXTRA_ARGS | Any extra OPTEE arguments to pass to build (example:CFG_CONSOLE_UART=0x8) |
 | UBOOT_ARMV7_DEFCONFIG | Name of the u-boot defconfig for the R5 SPL |
